@@ -11,8 +11,12 @@
   returns the file descriptor for the upstream pipe.
   =========================*/
 int server_handshake(int *to_client) {
-  int toClientFIFO = mkfifo("toClientFIFO", 0644);
-  
+  int status;
+  int pd = mkfifo("toClientFIFO", 0644);
+  if (pd == -1) {
+    printf("Error: %s\n", strerror(errno));
+  }
+  close("toClientFI
 }
 
 
