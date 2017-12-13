@@ -11,19 +11,26 @@
   returns the file descriptor for the upstream pipe.
   =========================*/
 int server_handshake(int *to_client) {
-  int pd; // pipe descriptor
   char buf[300];
-
-  if (mkfifo("toClientFIFO", 0644) == -1) {
+  printf("TEST\n");
+  if (mkfifo("WKP", 0644) == -1) {
     printf("Error: %s\n", strerror(errno));
   }
-  pd = open("toClientFIFO", O_RDONLY);
+  int pd = open("WKP", O_RDONLY);
+  printf("TEST\n");
   if (pd == -1) {
     printf("Error: %s\n", strerror(errno));
   }
-  if (read(pd, buf, 300 * sizeof(char)) == -1) {
+  if (read(pd, buf, sizeof(buf)) == -1) {
     printf("Error: %s\n", strerror(errno));
   }
+  printf("pipe name received: %s\n", buf);
+  *to_client = open(buf, O_WRONLY);
+  remove("WKP");
+  if (write(*to_client, ACK, strlen(ACK)) == -1) {
+    printf("Error: %s\n", strerror(errno));
+  }
+  return pd;
 }
 
 
@@ -36,6 +43,21 @@ int server_handshake(int *to_client) {
 
   returns the file descriptor for the downstream pipe.
   =========================*/
-int client_handshake(int *to_server) {
-  return 0;
+int client_handshake(int *to_server) {  
+  char buf[300];
+  //printf("TEST\n");
+  if (mkfifo("PRIVATE", 0644) == -1) {
+    printf("Error: %s\n", strerror(errno));
+  }
+  int pd = open("PRIVATE", O_RDONLY);
+  if (pd == -1) {
+    printf("Error: %s\n", strerror(errno));
+  }
+  *to_server = open("WKP", O_WRONLY);
+  if (write(*to_server, "PRIVATE", strlen("PRIVATE")) == -1) {
+    printf("Error: %s\n", strerror(errno));
+  }
+  read(pd, buf, sizeof(buf));
+  printf("Message received: %s\n", buf);
+  return pd;
 }
