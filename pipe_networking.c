@@ -30,6 +30,14 @@ int server_handshake(int *to_client) {
   if (write(*to_client, ACK, strlen(ACK)) == -1) {
     printf("Error: %s\n", strerror(errno));
   }
+  if (read(pd, buf, sizeof(buf)) == -1) {
+    printf("Error: %s\n", strerror(errno));
+  }
+  if (strncmp(buf, ACK, sizeof(buf)) == 0) {
+    printf("Confirmation message received: \"%s\"\n", buf);
+  } else {
+    printf("Error: received message \"%s\" instead of confirmation message \"%s\".\n", buf, ACK);
+  }
   return pd;
 }
 
@@ -49,15 +57,27 @@ int client_handshake(int *to_server) {
   if (mkfifo("PRIVATE", 0644) == -1) {
     printf("Error: %s\n", strerror(errno));
   }
-  int pd = open("PRIVATE", O_RDONLY);
-  if (pd == -1) {
-    printf("Error: %s\n", strerror(errno));
-  }
   *to_server = open("WKP", O_WRONLY);
   if (write(*to_server, "PRIVATE", strlen("PRIVATE")) == -1) {
     printf("Error: %s\n", strerror(errno));
   }
-  read(pd, buf, sizeof(buf));
+  int pd = open("PRIVATE", O_RDONLY);
+  if (pd == -1) {
+    printf("Error: %s\n", strerror(errno));
+  }
+  
+  if (read(pd, buf, sizeof(buf)) == -1) {
+    printf("Error: %s\n", strerror(errno));
+  }
   printf("Message received: %s\n", buf);
+  remove("PRIVATE");
+  if (strncmp(buf, ACK, sizeof(buf)) == 0) {
+    printf("Confirmation message received: \"%s\"\n", buf);
+  } else {
+    printf("Error: received message \"%s\" instead of confirmation message \"%s\".\n", buf, ACK);
+  }
+  if (write(*to_server, ACK, sizeof(ACK)) == -1) {
+    printf("Error: %s\n", strerror(errno));
+  }
   return pd;
 }
