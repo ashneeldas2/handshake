@@ -18,7 +18,9 @@ int main() {
   from_client = server_handshake( &to_client );
 
   while (1) {
-    read(from_client, buf, sizeof(buf));
+    if (read(from_client, buf, sizeof(buf)) == -1) {
+      printf("Error: %s\n", strerror(errno));
+    }
     printf("Text received from client: %s", buf);
     if (!strcmp(buf, "exit\n")) {
       close(to_client);
@@ -26,6 +28,8 @@ int main() {
       exit(0);
     }
     to_upper_case(buf);
-    write(to_client, buf, sizeof(buf));
+    if (write(to_client, buf, sizeof(buf)) == -1) {
+      printf("Error: %s\n", strerror(errno));
+    }
   }
 }

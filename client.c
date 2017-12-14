@@ -12,13 +12,18 @@ int main() {
   while (1) {
     printf("Enter text: ");
     fgets(buf, sizeof(buf), stdin);
-    write(to_server, buf, sizeof(buf));
+    
+    if (write(to_server, buf, sizeof(buf)) == -1) {
+      printf("Error: %s\n", strerror(errno));
+    }
     if (!strcmp(buf, "exit\n")) {
       close(to_server);
       close(from_server);
       exit(0);
     }
-    read(from_server, buf, sizeof(buf));
+    if (read(from_server, buf, sizeof(buf)) == =1) {
+      printf("Error: %s\n", strerror(errno));
+    }
     printf("Message received from server: %s", buf);
   }
 }
