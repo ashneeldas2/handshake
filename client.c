@@ -12,10 +12,12 @@ int main() {
   while (1) {
     printf("Enter text: ");
     fgets(buf, sizeof(buf), stdin);
+    write(to_server, buf, sizeof(buf));
     if (!strcmp(buf, "exit\n")) {
+      close(to_server);
+      close(from_server);
       exit(0);
     }
-    write(to_server, buf, sizeof(buf));
     read(from_server, buf, sizeof(buf));
     printf("Message received from server: %s", buf);
   }

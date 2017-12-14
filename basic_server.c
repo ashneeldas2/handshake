@@ -20,6 +20,11 @@ int main() {
   while (1) {
     read(from_client, buf, sizeof(buf));
     printf("Text received from client: %s", buf);
+    if (!strcmp(buf, "exit\n")) {
+      close(to_client);
+      close(from_client);
+      exit(0);
+    }
     to_upper_case(buf);
     write(to_client, buf, sizeof(buf));
   }
