@@ -21,7 +21,7 @@ int main() {
       close(from_server);
       exit(0);
     }
-    if (read(from_server, buf, sizeof(buf)) == =1) {
+    if (read(from_server, buf, sizeof(buf)) == -1) {
       printf("Error: %s\n", strerror(errno));
     }
     printf("Message received from server: %s", buf);

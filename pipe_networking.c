@@ -38,7 +38,7 @@ int server_handshake(int *to_client) {
   
   remove("WKP");
   
-  if (write(*to_client, ACK, strlen(ACK)) == -1) {
+  if (write(*to_client, ACK, sizeof(ACK)) == -1) {
     printf("Error: %s\n", strerror(errno));
   }
   
@@ -79,7 +79,7 @@ int client_handshake(int *to_server) {
     printf("Error: %s\n", strerror(errno));
   }
   
-  if (write(*to_server, "PRIVATE", strlen("PRIVATE")) == -1) {
+  if (write(*to_server, "PRIVATE", sizeof("PRIVATE")) == -1) {
     printf("Error: %s\n", strerror(errno));
   }
   
