@@ -1,6 +1,5 @@
 #include "pipe_networking.h"
 
-
 /*=========================
   server_handshake
   args: int * to_client
@@ -11,7 +10,7 @@
   returns the file descriptor for the upstream pipe.
   =========================*/
 int server_handshake(int *to_client) {
-  char buf[300];
+  char buf[HANDSHAKE_BUFFER_SIZE];
   int pd; // pipe descriptor
   
   // printf("TEST\n");
@@ -67,7 +66,7 @@ int server_handshake(int *to_client) {
   returns the file descriptor for the downstream pipe.
   =========================*/
 int client_handshake(int *to_server) {  
-  char buf[300]; // buffer to read from FIFO
+  char buf[HANDSHAKE_BUFFER_SIZE]; // buffer to read from FIFO
   int pd;
   
   //printf("TEST\n");
@@ -104,6 +103,5 @@ int client_handshake(int *to_server) {
   if (write(*to_server, ACK, sizeof(ACK)) == -1) {
     printf("Error: %s\n", strerror(errno));
   }
-  
   return pd;
 }
